@@ -60,21 +60,13 @@ class App extends Component{
 
   handleClick = (index)  => {
     const { hits } = this.state;
-    //console.log(index, hits);
-   // const foundData = hits.find((el,index) => el[index] === el);
     const foundData = hits[index];
     console.log(foundData);
     this.setState({
       modalData : foundData,
       modalOpen: true,
     });
-    //console.log(this.state.modalData);
-    //console.log(this.state.modalOpen);
   };
-
-  afterOpenModal = () => {
-
-  }
 
   closeModal = () => {
     this.setState({
@@ -144,7 +136,6 @@ class App extends Component{
               modalOpen && modalData &&
               <Modal
                 isOpen={modalOpen}
-                onAfterOpen={this.afterOpenModal}
                 onRequestClose={this.closeModal}
                 style={customStyles}
                 contentLabel="Example Modal"
