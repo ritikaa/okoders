@@ -1,11 +1,25 @@
 import React, { Component } from 'react';
 import './App.css';
 import { URL } from "./constant";
+import Modal from 'react-modal';
+
+const customStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
+
+Modal.setAppElement('#root');
 
 const filterKeyMap = {
   searchTitle: 'title',
   searchUrl: 'url',
-  searchAuthor: 'author'
+  searchAuthor: 'author',
 };
 
 class App extends Component{
@@ -37,30 +51,33 @@ class App extends Component{
   async getHits() {
     const res = await fetch(URL);
     res.json()
-      .then(res => this.setState({
-        hits: res.hits,
-        filteredData: res.hits,
-        counter: this.state.counter+1,
-      }));
-    //console.log(this.state.hits);
-    //console.log(this.state.counter);
+       .then(res => this.setState({
+         hits: res.hits,
+         filteredData: res.hits,
+         counter: this.state.counter+1,
+       }));
   }
 
   handleClick = (index)  => {
-    //console.log(index);
     const { hits } = this.state;
     const foundData = hits.find((el,index) => el);
-    console.log(foundData);
+    //console.log(foundData);
     this.setState({
-       modalData : foundData,
-        modalOpen: true,
+      modalData : foundData,
+      modalOpen: true,
+    });
+    //console.log(this.state.modalOpen);
+  };
+
+  afterOpenModal = () => {
+
+  }
+
+  closeModal = () => {
+    this.setState({
+      modalOpen: false,
+      modalData: '',
     })
-    // const { hits } = this.state;
-    // let modalFind = hits.find(index);
-    // console.log(modalFind);
-    // this.setState({
-    //   modalData: hits.find(index)
-    // })
   };
 
   handleChange  = (event) => {
@@ -80,54 +97,54 @@ class App extends Component{
         <div>
           <h4>Search By : </h4>
           <form>
-              <label htmlFor="searchTitle">
-                Title :
-              </label>
-              <input
-                type="text"
-                id="searchTitle"
-                name="searchTitle"
-                onChange={this.handleChange}
-                value={this.state.searchTitle}
-              />
+            <label htmlFor="searchTitle">
+              Title :
+            </label>
+            <input
+              type="text"
+              id="searchTitle"
+              name="searchTitle"
+              onChange={this.handleChange}
+              value={this.state.searchTitle}
+            />
 
-              <label htmlFor="searchUrl">
-                URL :
-              </label>
-              <input
-                type="text"
-                name="searchUrl"
-                id="searchUrl"
-                onChange={this.handleChange}
-                value={this.state.searchUrl}
-              />
+            <label htmlFor="searchUrl">
+              URL :
+            </label>
+            <input
+              type="text"
+              name="searchUrl"
+              id="searchUrl"
+              onChange={this.handleChange}
+              value={this.state.searchUrl}
+            />
 
-              <label htmlFor="searchAuthor">
-                Author
-              </label>
-              <input
-                type="text"
-                id="searchAuthor"
-                name="searchAuthor"
-                onChange={this.handleChange}
-                value={this.state.searchAuthor}
-              />
+            <label htmlFor="searchAuthor">
+              Author
+            </label>
+            <input
+              type="text"
+              id="searchAuthor"
+              name="searchAuthor"
+              onChange={this.handleChange}
+              value={this.state.searchAuthor}
+            />
             <div>
               <h4>Filter By : </h4>
             </div>
-            {/*<button*/}
-            {/*  type="button"*/}
-            {/*  onClick={this.handleClick}*/}
-            {/*>*/}
-            {/*  Get Data*/}
-            {/*</button>*/}
             <div>
               <p>Counter : {this.state.counter}</p>
             </div>
-            {
-              this.state.modalOpen &&
-                <p>{this.state.modalData.title}<br/>{this.state.modalData.url}<br/>{this.state.modalData["created_at"]}<br/>{this.state.modalData.author}</p>
-            }
+            <Modal
+              isOpen={this.state.modalOpen}
+              onAfterOpen={this.afterOpenModal}
+              onRequestClose={this.closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+            >
+              <button onClick={this.closeModal} style={{color: 'red', border: 0, cursor: 'pointer'}}>close</button>
+              <p>Title : {this.state.modalData.title}<br/> URL : {this.state.modalData.url}<br/> Created At : {this.state.modalData["created_at"]}<br/> Author : {this.state.modalData.author}</p>
+            </Modal>
             <table>
               <thead>
               <tr>
