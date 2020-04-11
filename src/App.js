@@ -37,7 +37,7 @@ class App extends Component{
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getHits();
     this.interval = setInterval(() => {
       this.getHits();
@@ -60,12 +60,15 @@ class App extends Component{
 
   handleClick = (index)  => {
     const { hits } = this.state;
-    const foundData = hits.find((el,index) => el);
-    //console.log(foundData);
+    //console.log(index, hits);
+   // const foundData = hits.find((el,index) => el[index] === el);
+    const foundData = hits[index];
+    console.log(foundData);
     this.setState({
       modalData : foundData,
       modalOpen: true,
     });
+    //console.log(this.state.modalData);
     //console.log(this.state.modalOpen);
   };
 
@@ -92,6 +95,8 @@ class App extends Component{
   };
 
   render() {
+    let { searchTitle, searchUrl, searchAuthor, filteredData, modalOpen, modalData } = this.state;
+
     return (
       <div className="wrapper">
         <div>
@@ -105,7 +110,7 @@ class App extends Component{
               id="searchTitle"
               name="searchTitle"
               onChange={this.handleChange}
-              value={this.state.searchTitle}
+              value={searchTitle}
             />
 
             <label htmlFor="searchUrl">
@@ -116,7 +121,7 @@ class App extends Component{
               name="searchUrl"
               id="searchUrl"
               onChange={this.handleChange}
-              value={this.state.searchUrl}
+              value={searchUrl}
             />
 
             <label htmlFor="searchAuthor">
@@ -127,7 +132,7 @@ class App extends Component{
               id="searchAuthor"
               name="searchAuthor"
               onChange={this.handleChange}
-              value={this.state.searchAuthor}
+              value={searchAuthor}
             />
             <div>
               <h4>Filter By : </h4>
@@ -135,16 +140,20 @@ class App extends Component{
             <div>
               <p>Counter : {this.state.counter}</p>
             </div>
-            <Modal
-              isOpen={this.state.modalOpen}
-              onAfterOpen={this.afterOpenModal}
-              onRequestClose={this.closeModal}
-              style={customStyles}
-              contentLabel="Example Modal"
-            >
-              <button onClick={this.closeModal} style={{color: 'red', border: 0, cursor: 'pointer'}}>close</button>
-              <p>Title : {this.state.modalData.title}<br/> URL : {this.state.modalData.url}<br/> Created At : {this.state.modalData["created_at"]}<br/> Author : {this.state.modalData.author}</p>
-            </Modal>
+            {
+              modalOpen && modalData &&
+              <Modal
+                isOpen={modalOpen}
+                onAfterOpen={this.afterOpenModal}
+                onRequestClose={this.closeModal}
+                style={customStyles}
+                contentLabel="Example Modal"
+              >
+                <button onClick={this.closeModal} style={{color: 'red', border: 0, cursor: 'pointer'}}>close</button>
+                <p>Title : {modalData.title}<br/> URL : {modalData.url}<br/> Created At : {modalData["created_at"]}<br/> Author : {modalData.author}</p>
+              </Modal>
+            }
+
             <table>
               <thead>
               <tr>
@@ -156,7 +165,7 @@ class App extends Component{
               </thead>
               <tbody>
               {
-                this.state.filteredData.map((hit,index) => {
+                filteredData.map((hit,index) => {
                   return <tr key={index} onClick={() => this.handleClick(index)}>
                     <td>{hit.title}</td>
                     <td>{hit.url}</td>
