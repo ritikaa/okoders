@@ -22,9 +22,9 @@ const filterKeyMap = {
   searchAuthor: 'author',
 };
 
-class App extends Component{
-  constructor(props) {
-    super(props);
+class App extends Component {
+  constructor( props ) {
+    super( props );
     this.state = {
       counter: 0,
       hits: [],
@@ -33,57 +33,66 @@ class App extends Component{
       searchAuthor: '',
       filteredData: [],
       modalData: '',
-      modalOpen: false
+      modalOpen: false,
+      fetchedHits: [],
     }
   }
 
   componentDidMount() {
     this.getHits();
-    this.interval = setInterval(() => {
-      this.getHits();
-    },10000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
   }
 
   async getHits() {
-    const res = await fetch(URL);
+    const { hits, counter } = this.state;
+    const res = await fetch( URL( counter ) );
     res.json()
-       .then(res => this.setState({
-         hits: res.hits,
-         filteredData: res.hits,
-         counter: this.state.counter+1,
-       }));
+       .then( res => this.setState( {
+         hits: [...hits, ...res.hits],
+         filteredData: [...hits, ...res.hits]
+       } ) );
   }
 
-  handleClick = (index)  => {
+  handleClick = ( index ) => {
     const { hits } = this.state;
     const foundData = hits[index];
-    console.log(foundData);
-    this.setState({
-      modalData : foundData,
+    this.setState( {
+      modalData: foundData,
       modalOpen: true,
-    });
+    } );
   };
 
   closeModal = () => {
-    this.setState({
+    this.setState( {
       modalOpen: false,
       modalData: '',
-    })
+    } )
   };
 
-  handleChange  = (event) => {
-    const { name, value} = event.target;
+  handleChange = ( event ) => {
+    const { name, value } = event.target;
     const { hits } = this.state;
     const _key = filterKeyMap[name];
-    const filteredData = hits.filter(item => (item[_key]).includes(value));
-    this.setState({
+    const filteredData = hits.filter( item => (item[_key]).includes( value ) );
+    this.setState( {
       [name]: value,
       filteredData
-    });
+    } );
+  };
+
+  handlePrev = () => {
+    this.setState( {
+      counter: this.state.counter >= 0 ? this.state.counter - 1 : this.setState( { counter: 0 } )
+    }, () => {
+      this.getHits();
+    } );
+  }
+
+  handleNext = () => {
+    this.setState({
+      counter: this.state.counter + 1,
+    }, () => {
+      this.getHits();
+    })
   };
 
   render() {
@@ -126,12 +135,6 @@ class App extends Component{
               onChange={this.handleChange}
               value={searchAuthor}
             />
-            <div>
-              <h4>Filter By : </h4>
-            </div>
-            <div>
-              <p>Counter : {this.state.counter}</p>
-            </div>
             {
               modalOpen && modalData &&
               <Modal
@@ -167,6 +170,20 @@ class App extends Component{
               }
               </tbody>
             </table>
+            <div className="inline-block">
+              <p>Counter : {this.state.counter}</p>
+              <div className="pagination">
+                <button
+                  type="button"
+                  onClick={this.handlePrev}
+                > &lt; Prev</button>
+                <span> || </span>
+                <button
+                  type="button"
+                  onClick={this.handleNext}
+                >Next &gt; </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>

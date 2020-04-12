@@ -7,6 +7,7 @@ table {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 th, td {
@@ -21,4 +22,24 @@ form label {
 form input {
   padding: 5px 15px;
   margin-right: 15px;
+}
+
+.inline-block p,
+.inline-block .pagination {
+  display: inline-block;
+}
+
+.pagination {
+  text-align: right;
+  margin: 20px;
+}
+
+.pagination button {
+  padding: 5px 15px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.pagination span {
+  margin-right: 10px;
 }
